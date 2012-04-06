@@ -34,23 +34,6 @@ public class SocketServer implements Runnable {
 
     }
 
-    public static void main(String[] args) {
-        int port = DEFAULT_PORT;
-        String ip = DEFAULT_IP;
-        if (args.length > 1) {
-            port = Integer.parseInt(args[1]);
-            ip = args[0];
-        }
-        try {
-            new SocketServer(InetAddress.getByName(ip), port);
-           
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     public void run() {
         try {
             mServerSocket = new ServerSocket(port, 0, ipAddress);
