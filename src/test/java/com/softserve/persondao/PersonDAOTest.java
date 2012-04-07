@@ -7,6 +7,7 @@ package com.softserve.persondao;
 import com.softserve.person.Person;
 import java.util.ArrayList;
 import java.util.List;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -23,7 +24,8 @@ public class PersonDAOTest {
     private Person person;
     private Long testid;
     private List<Person> persons = new ArrayList<Person>();
-
+    SessionFactory sessionFactoryMock;
+    PersonDAO personDAO;
     public PersonDAOTest() {
     }
 
@@ -38,13 +40,18 @@ public class PersonDAOTest {
     @Before
     public void setUp() {
         testid = new Long(1);
+        sessionFactoryMock = Mockito.mock(org.hibernate.SessionFactory.class);
         sessionMock = Mockito.mock(org.hibernate.Session.class);
         transactionMock = Mockito.mock(org.hibernate.Transaction.class);
         org.hibernate.Criteria criteriaMock = Mockito.mock(org.hibernate.Criteria.class);
+        Mockito.when(sessionFactoryMock.openSession()).thenReturn(sessionMock);
         Mockito.when(sessionMock.getTransaction()).thenReturn(transactionMock);
         Mockito.when(sessionMock.get(Person.class, testid)).thenReturn(person);
         Mockito.when(sessionMock.createCriteria(Person.class)).thenReturn(criteriaMock);
         Mockito.when(criteriaMock.list()).thenReturn(persons);
+
+        
+        personDAO = new PersonDAO(sessionFactoryMock);
         Person person = new Person();
         person.setFirstName("Roman");
         person.setLastName("Kostyrko");
@@ -61,8 +68,9 @@ public class PersonDAOTest {
      */
     @Test
     public void testAddPerson() {
-        PersonDAO pdao = new PersonDAO(sessionMock);
-        pdao.addPerson(person);
+        Session session = sessionFactoryMock.openSession();
+        
+        personDAO.addPerson(person);
         Mockito.verify(sessionMock).beginTransaction();
         Mockito.verify(sessionMock).save(person);
         Mockito.verify(transactionMock).commit();
@@ -73,8 +81,7 @@ public class PersonDAOTest {
      */
     @Test
     public void testDelPerson() {
-        PersonDAO pdao = new PersonDAO(sessionMock);
-        pdao.delPerson(testid);
+        personDAO.delPerson(testid);
         Mockito.verify(sessionMock).beginTransaction();
         Mockito.verify(sessionMock).get(Person.class, testid);
         Mockito.verify(sessionMock).delete(person);
@@ -86,8 +93,7 @@ public class PersonDAOTest {
      */
     @Test
     public void testGetPersonById() {
-        PersonDAO pdao = new PersonDAO(sessionMock);
-        person = pdao.getPersonById(testid);
+        person = personDAO.getPersonById(testid);
         Mockito.verify(sessionMock).get(Person.class, testid);
     }
 
@@ -96,8 +102,7 @@ public class PersonDAOTest {
      */
     @Test
     public void testUpdatePerson() throws Exception {
-        PersonDAO pdao = new PersonDAO(sessionMock);
-        pdao.updatePerson(person);
+        personDAO.updatePerson(person);
         Mockito.verify(sessionMock).beginTransaction();
         Mockito.verify(sessionMock).update(person);
         Mockito.verify(transactionMock).commit();
@@ -108,8 +113,7 @@ public class PersonDAOTest {
      */
     @Test
     public void testGetPersonList() {
-        PersonDAO pdao = new PersonDAO(sessionMock);
-        persons = pdao.getPersonList();
+        persons = personDAO.getPersonList();
         Mockito.verify(sessionMock).createCriteria(Person.class);
     }
 }

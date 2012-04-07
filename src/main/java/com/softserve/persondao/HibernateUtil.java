@@ -4,8 +4,11 @@
  */
 package com.softserve.persondao;
 
+import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.service.ServiceRegistry;
+import org.hibernate.service.ServiceRegistryBuilder;
 
 /**
  *
@@ -13,17 +16,27 @@ import org.hibernate.cfg.Configuration;
  */
 public class HibernateUtil {
 
-    private static final SessionFactory sessionFactory;
-
-    static {
-        try {
-            sessionFactory = new Configuration().configure().buildSessionFactory();
-        } catch (Throwable ex) {
-            throw new ExceptionInInitializerError(ex);
-        }
-    }
-
-    public static SessionFactory getSessionFactory() {
+//    private volatile static HibernateUtil instance;
+//
+//    private HibernateUtil() {
+//    }
+//    
+//    public static HibernateUtil getInstance() {
+//        if (instance == null) {
+//            synchronized (HibernateUtil.class) {
+//                if (instance == null) {
+//                    instance = new HibernateUtil();
+//                }
+//            }
+//        }
+//        return instance;
+//    }
+//    
+    public static SessionFactory configureSessionFactory() throws HibernateException {
+        Configuration configuration = new Configuration();
+        configuration.configure();
+        ServiceRegistry serviceRegistry = new ServiceRegistryBuilder().applySettings(configuration.getProperties()).buildServiceRegistry();
+        SessionFactory sessionFactory = configuration.buildSessionFactory(serviceRegistry);
         return sessionFactory;
     }
 }
