@@ -20,7 +20,7 @@ public class CommandProcessor {
 
     public CommandProcessor(SocketThread sthread) {
         this.sthread = sthread;
-        personDAO = new PersonDAO();
+        //personDAO = new PersonDAO();
     }
 
     private void sendPersonList() {

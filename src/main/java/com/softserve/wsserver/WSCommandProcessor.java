@@ -22,7 +22,7 @@ public class WSCommandProcessor {
 
     public WSCommandProcessor(WSThread wsthread) {
         this.wsthread = wsthread;
-        personDAO = new PersonDAO();
+        //personDAO = new PersonDAO();
     }
 
     private void sendPersonList() throws IOException {
