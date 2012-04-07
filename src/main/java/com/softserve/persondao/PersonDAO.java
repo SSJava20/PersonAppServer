@@ -30,14 +30,13 @@ public class PersonDAO {
 
     public void delPerson(Long id) {
         session.beginTransaction();
-        Person tmpPerson = getPersonById(id);
+        Person tmpPerson = (Person) session.get(Person.class, id);;
         session.delete(tmpPerson);
         session.getTransaction().commit();
     }
 
     public Person getPersonById(Long id) {
         Person person = null;
-        session = HibernateUtil.getSessionFactory().openSession();
         person = (Person) session.get(Person.class, id);
         return person;
     }

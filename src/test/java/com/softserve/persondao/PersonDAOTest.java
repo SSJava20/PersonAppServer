@@ -17,6 +17,11 @@ import org.mockito.Mockito;
  */
 public class PersonDAOTest {
 
+    private org.hibernate.Session sessionMock;
+    org.hibernate.Transaction transactionMock;
+    Person person;
+    private Long testid;
+
     public PersonDAOTest() {
     }
 
@@ -30,6 +35,15 @@ public class PersonDAOTest {
 
     @Before
     public void setUp() {
+        testid = new Long(1);
+        sessionMock = Mockito.mock(org.hibernate.Session.class);
+        transactionMock = Mockito.mock(org.hibernate.Transaction.class);
+        Mockito.when(sessionMock.getTransaction()).thenReturn(transactionMock);
+        Mockito.when(sessionMock.get(Person.class, testid)).thenReturn(person);
+        Person person = new Person();
+        person.setFirstName("Roman");
+        person.setLastName("Kostyrko");
+        person.setEmail("nubaseg@gmail.com");
     }
 
     @After
@@ -41,12 +55,11 @@ public class PersonDAOTest {
      */
     @Test
     public void testAddPerson() {
-        org.hibernate.Session session = Mockito.mock(org.hibernate.Session.class);
-        PersonDAO pdao = new PersonDAO(session);
-        Person person = new Person();
-        person.setFirstName("Roman");
-        person.setLastName("Kostyrko");
+        PersonDAO pdao = new PersonDAO(sessionMock);
         pdao.addPerson(person);
+        Mockito.verify(sessionMock).beginTransaction();
+        Mockito.verify(sessionMock).save(person);
+        Mockito.verify(transactionMock).commit();
     }
 
     /**
@@ -54,8 +67,12 @@ public class PersonDAOTest {
      */
     @Test
     public void testDelPerson() {
-
-        fail("The test case is a prototype.");
+        PersonDAO pdao = new PersonDAO(sessionMock);
+        pdao.delPerson(testid);
+        Mockito.verify(sessionMock).beginTransaction();
+        Mockito.verify(sessionMock).get(Person.class, testid);
+        Mockito.verify(sessionMock).delete(person);
+        Mockito.verify(transactionMock).commit();
     }
 
     /**
@@ -63,8 +80,9 @@ public class PersonDAOTest {
      */
     @Test
     public void testGetPersonById() {
-
-        fail("The test case is a prototype.");
+        PersonDAO pdao = new PersonDAO(sessionMock);
+        person = pdao.getPersonById(testid);
+        Mockito.verify(sessionMock).get(Person.class, testid);
     }
 
     /**
@@ -72,8 +90,11 @@ public class PersonDAOTest {
      */
     @Test
     public void testUpdatePerson() throws Exception {
-
-        fail("The test case is a prototype.");
+        PersonDAO pdao = new PersonDAO(sessionMock);
+        pdao.updatePerson(person);
+        Mockito.verify(sessionMock).beginTransaction();
+        Mockito.verify(sessionMock).update(person);
+        Mockito.verify(transactionMock).commit();
     }
 
     /**
