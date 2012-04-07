@@ -16,49 +16,29 @@ import org.hibernate.Session;
  */
 public class PersonDAO {
 
+    Session session;
+
+    public PersonDAO(Session session) {
+        this.session = session;
+    }
+
     public void addPerson(Person person) {
-        Session session = null;
-        try {
-            session = HibernateUtil.getSessionFactory().openSession();
-            session.beginTransaction();
-            session.save(person);
-            session.getTransaction().commit();
-        } catch (Exception e) {
-        } finally {
-            if (session != null && session.isOpen()) {
-                session.close();
-            }
-        }
+        session.beginTransaction();
+        session.save(person);
+        session.getTransaction().commit();
     }
 
     public void delPerson(Long id) {
-        Session session = null;
-        try {
-            session = HibernateUtil.getSessionFactory().openSession();
-            session.beginTransaction();
-            Person tmpPerson = getPersonById(id);
-            session.delete(tmpPerson);
-            session.getTransaction().commit();
-        } catch (Exception e) {
-        } finally {
-            if (session != null && session.isOpen()) {
-                session.close();
-            }
-        }
+        session.beginTransaction();
+        Person tmpPerson = getPersonById(id);
+        session.delete(tmpPerson);
+        session.getTransaction().commit();
     }
 
     public Person getPersonById(Long id) {
-        Session session = null;
         Person person = null;
-        try {
-            session = HibernateUtil.getSessionFactory().openSession();
-            person = (Person) session.get(Person.class, id);
-        } catch (Exception e) {
-        } finally {
-            if (session != null && session.isOpen()) {
-                session.close();
-            }
-        }
+        session = HibernateUtil.getSessionFactory().openSession();
+        person = (Person) session.get(Person.class, id);
         return person;
     }
 
@@ -66,34 +46,15 @@ public class PersonDAO {
         Person ptmp = getPersonById(person.getId());
         ptmp.setFirstName(person.getFirstName());
         ptmp.setLastName(person.getLastName());
-        Session session = null;
-        try {
-            session = HibernateUtil.getSessionFactory().openSession();
-            session.beginTransaction();
-
-            session.update(person);
-            session.getTransaction().commit();
-        } catch (Exception e) {
-        } finally {
-            if (session != null && session.isOpen()) {
-                session.close();
-            }
-        }
+        session.beginTransaction();
+        session.update(person);
+        session.getTransaction().commit();
     }
 
-    @SuppressWarnings("unchecked")
     public List<Person> getPersonList() {
-        Session session = null;
         List<Person> persons = new ArrayList<Person>();
-        try {
-            session = HibernateUtil.getSessionFactory().openSession();
-            persons = session.createCriteria(Person.class).list();
-        } catch (Exception e) {
-        } finally {
-            if (session != null && session.isOpen()) {
-                session.close();
-            }
-        }
+        session = HibernateUtil.getSessionFactory().openSession();
+        persons = session.createCriteria(Person.class).list();
         return persons;
     }
 }
