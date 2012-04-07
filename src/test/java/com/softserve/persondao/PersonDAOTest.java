@@ -5,6 +5,7 @@
 package com.softserve.persondao;
 
 import com.softserve.person.Person;
+import java.util.ArrayList;
 import java.util.List;
 import org.hibernate.SessionFactory;
 import org.junit.*;
@@ -18,9 +19,10 @@ import org.mockito.Mockito;
 public class PersonDAOTest {
 
     private org.hibernate.Session sessionMock;
-    org.hibernate.Transaction transactionMock;
-    Person person;
+    private org.hibernate.Transaction transactionMock;
+    private Person person;
     private Long testid;
+    private List<Person> persons = new ArrayList<Person>();
 
     public PersonDAOTest() {
     }
@@ -38,12 +40,16 @@ public class PersonDAOTest {
         testid = new Long(1);
         sessionMock = Mockito.mock(org.hibernate.Session.class);
         transactionMock = Mockito.mock(org.hibernate.Transaction.class);
+        org.hibernate.Criteria criteriaMock = Mockito.mock(org.hibernate.Criteria.class);
         Mockito.when(sessionMock.getTransaction()).thenReturn(transactionMock);
         Mockito.when(sessionMock.get(Person.class, testid)).thenReturn(person);
+        Mockito.when(sessionMock.createCriteria(Person.class)).thenReturn(criteriaMock);
+        Mockito.when(criteriaMock.list()).thenReturn(persons);
         Person person = new Person();
         person.setFirstName("Roman");
         person.setLastName("Kostyrko");
         person.setEmail("nubaseg@gmail.com");
+        persons.add(person);
     }
 
     @After
@@ -102,7 +108,8 @@ public class PersonDAOTest {
      */
     @Test
     public void testGetPersonList() {
-
-        fail("The test case is a prototype.");
+        PersonDAO pdao = new PersonDAO(sessionMock);
+        persons = pdao.getPersonList();
+        Mockito.verify(sessionMock).createCriteria(Person.class);
     }
 }

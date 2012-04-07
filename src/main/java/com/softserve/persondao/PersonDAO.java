@@ -42,9 +42,6 @@ public class PersonDAO {
     }
 
     public void updatePerson(Person person) throws SQLException {
-        Person ptmp = getPersonById(person.getId());
-        ptmp.setFirstName(person.getFirstName());
-        ptmp.setLastName(person.getLastName());
         session.beginTransaction();
         session.update(person);
         session.getTransaction().commit();
@@ -52,7 +49,6 @@ public class PersonDAO {
 
     public List<Person> getPersonList() {
         List<Person> persons = new ArrayList<Person>();
-        session = HibernateUtil.getSessionFactory().openSession();
         persons = session.createCriteria(Person.class).list();
         return persons;
     }
