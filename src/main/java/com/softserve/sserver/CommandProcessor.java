@@ -5,6 +5,7 @@
 package com.softserve.sserver;
 
 import com.google.gson.Gson;
+import com.softserve.persondao.HibernateUtil;
 import com.softserve.persondao.PersonDAO;
 import com.softserve.protocol.*;
 import java.sql.SQLException;
@@ -16,16 +17,16 @@ import java.sql.SQLException;
 public class CommandProcessor {
 
     SocketThread sthread;
-    PersonDAO personDAO;
+    private PersonDAO personDAO;
 
     public CommandProcessor(SocketThread sthread) {
         this.sthread = sthread;
-        //personDAO = new PersonDAO();
+        //personDAO = new PersonDAO(HibernateUtil.configureSessionFactory());
     }
 
     private void sendPersonList() {
         CommandList cl = new CommandList();
-        cl.setPersons(personDAO.getPersonList());
+        cl.setPersons(getPersonDAO().getPersonList());
         Command com = new Command(cl);
         String s = com.serialize();
         sthread.sendCommand(s);
@@ -43,14 +44,14 @@ public class CommandProcessor {
             case Command.PERSON_ADD: {
                 CommandAdd commandList = gson.fromJson(command.getStringData(),
                         CommandAdd.class);
-                personDAO.addPerson(commandList.getPerson());
+                getPersonDAO().addPerson(commandList.getPerson());
                 sendPersonList();
                 break;
             }
             case Command.PERSON_DELETE: {
                 CommandDelete commandList = gson.fromJson(command.getStringData(),
                         CommandDelete.class);
-                personDAO.delPerson(commandList.getId());
+                getPersonDAO().delPerson(commandList.getId());
                 sendPersonList();
                 break;
             }
@@ -63,12 +64,26 @@ public class CommandProcessor {
             case Command.PERSON_UPDATE: {
                 CommandUpdate commandList = gson.fromJson(command.getStringData(),
                         CommandUpdate.class);
-                personDAO.updatePerson(commandList.getPerson());
+                getPersonDAO().updatePerson(commandList.getPerson());
                 sendPersonList();
                 break;
             }
             default: {
             }
         }
+    }
+
+    /**
+     * @return the personDAO
+     */
+    public PersonDAO getPersonDAO() {
+        return personDAO;
+    }
+
+    /**
+     * @param personDAO the personDAO to set
+     */
+    public void setPersonDAO(PersonDAO personDAO) {
+        this.personDAO = personDAO;
     }
 }

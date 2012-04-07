@@ -6,6 +6,7 @@ package com.softserve.wsserver;
 
 import com.google.gson.Gson;
 import com.softserve.person.Person;
+import com.softserve.persondao.HibernateUtil;
 import com.softserve.persondao.PersonDAO;
 import com.softserve.protocol.*;
 import java.io.IOException;
@@ -22,7 +23,7 @@ public class WSCommandProcessor {
 
     public WSCommandProcessor(WSThread wsthread) {
         this.wsthread = wsthread;
-        //personDAO = new PersonDAO();
+        personDAO = new PersonDAO(HibernateUtil.configureSessionFactory());
     }
 
     private void sendPersonList() throws IOException {
