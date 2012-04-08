@@ -67,6 +67,7 @@ public class CommandProcessorTest {
         CommandProcessor processor = new CommandProcessor(sthread);
         processor.setPersonDAO(personDAO);
         processor.operateCommand(s);
+        Mockito.verify(sthread).sendCommand(s);
         Mockito.verify(personDAO).getPersonList();
     }
 }
