@@ -86,7 +86,7 @@ public class PersonDAOOwn implements PersonDAO
     }
 
     @Override
-    public void updatePerson(int person_id, Person person) throws SQLException
+    public void updatePerson(long person_id, Person person) throws SQLException
     {
         Connection connection = connect("PersonBase", "SA", "");
         Statement statement = connection.createStatement();
@@ -94,7 +94,7 @@ public class PersonDAOOwn implements PersonDAO
     }
 
     @Override
-    public Person getPersonById(int person_id) throws SQLException
+    public Person getPersonById(long person_id) throws SQLException
     {
         Connection connection = connect("PersonBase", "SA", "");
         Statement statement = connection.createStatement();
@@ -190,10 +190,10 @@ public class PersonDAOOwn implements PersonDAO
     }
 
     @Override
-    public void deletePerson(Person person) throws SQLException
+    public void deletePerson(long id) throws SQLException
     {
         Connection connection = connect("PersonBase", "SA", "");
         Statement statement = connection.createStatement();
-        String query = "DELETE FROM Persons Where ID=" +person.getId();
+        String query = "DELETE FROM Persons Where ID=" +id;
     }
 }

@@ -15,8 +15,8 @@ import java.util.Collection;
 public interface PersonDAO
 {
     public void addPerson(Person person) throws SQLException;
-    public void updatePerson(int person_id, Person person) throws SQLException;
-    public Person getPersonById(int person_id) throws SQLException;
+    public void updatePerson(long person_id, Person person) throws SQLException;
+    public Person getPersonById(long person_id) throws SQLException;
     public Collection getAllPersons() throws SQLException;
-    public void deletePerson(Person person) throws SQLException;
+    public void deletePerson(long id) throws SQLException;
 }

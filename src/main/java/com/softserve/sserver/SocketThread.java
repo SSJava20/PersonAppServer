@@ -4,8 +4,9 @@
  */
 package com.softserve.sserver;
 
-import com.softserve.persondao.HibernateUtil;
 import com.softserve.persondao.PersonDAO;
+import com.softserve.persondao.PersonDAOOwn;
+
 import java.io.*;
 import java.net.Socket;
 import java.util.Scanner;
@@ -23,7 +24,7 @@ public class SocketThread implements Runnable {
     public SocketThread(Socket clientSocket) {
         this.clientSocket = clientSocket;
         processor = new CommandProcessor(this);
-        processor.setPersonDAO(new PersonDAO(HibernateUtil.configureSessionFactory()));
+        processor.setPersonDAO(new PersonDAOOwn());
         mthread = new Thread(this);
         mthread.start();
     }

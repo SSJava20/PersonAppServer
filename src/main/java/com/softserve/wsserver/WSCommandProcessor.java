@@ -6,11 +6,12 @@ package com.softserve.wsserver;
 
 import com.google.gson.Gson;
 import com.softserve.person.Person;
-import com.softserve.persondao.HibernateUtil;
 import com.softserve.persondao.PersonDAO;
+import com.softserve.persondao.PersonDAOOwn;
 import com.softserve.protocol.*;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  *
@@ -23,12 +24,13 @@ public class WSCommandProcessor {
 
     public WSCommandProcessor(WSThread wsthread) {
         this.wsthread = wsthread;
-        personDAO = new PersonDAO(HibernateUtil.configureSessionFactory());
+        personDAO = new PersonDAOOwn();
     }
 
-    private void sendPersonList() throws IOException {
+    private void sendPersonList() throws IOException, SQLException
+    {
         CommandList cl = new CommandList();
-        cl.setPersons(personDAO.getPersonList());
+        cl.setPersons((List<Person>) personDAO.getAllPersons());
         Command com = new Command(cl);
         String s = com.serialize();
         System.out.println(s);
@@ -58,7 +60,7 @@ public class WSCommandProcessor {
             case Command.PERSON_DELETE: {
                 CommandDelete commandList = gson.fromJson(command.getStringData(),
                         CommandDelete.class);
-                personDAO.delPerson(commandList.getId());
+                personDAO.deletePerson(commandList.getId());
                 sendPersonList();
                 break;
             }
@@ -79,7 +81,7 @@ public class WSCommandProcessor {
                 CommandUpdate commandUpd = gson.fromJson(command.getStringData(),
                         CommandUpdate.class);
                 Person p = commandUpd.getPerson();
-                personDAO.updatePerson(p);
+                personDAO.updatePerson(p.getId(), p);
                 sendPersonList();
                 break;
             }

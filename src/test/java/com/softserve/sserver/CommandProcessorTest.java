@@ -5,7 +5,6 @@
 package com.softserve.sserver;
 
 import com.softserve.person.Person;
-import com.softserve.persondao.HibernateUtil;
 import com.softserve.persondao.PersonDAO;
 import com.softserve.protocol.Command;
 import com.softserve.protocol.CommandAdd;
@@ -63,7 +62,8 @@ public class CommandProcessorTest {
         person = new Person();
         person.setFirstName("Roman");
         person.setLastName("Kostyrko");
-        person.setEmail("nubaseg@gmail.com");
+        ArrayList<String> tlist = new ArrayList<String>();
+        tlist.add("nubaseg@gmail.com");
         persons.add(person);
     }
     
@@ -82,7 +82,7 @@ public class CommandProcessorTest {
         CommandProcessor processor = new CommandProcessor(sthread);
         processor.setPersonDAO(personDAO);
         processor.operateCommand(stringCommand);
-        Mockito.verify(personDAO).getPersonList();
+        Mockito.verify(personDAO).getAllPersons();
     }
     
     @Test
@@ -106,6 +106,6 @@ public class CommandProcessorTest {
         CommandProcessor processor = new CommandProcessor(sthread);
         processor.setPersonDAO(personDAO);
         processor.operateCommand(stringCommand);
-        Mockito.verify(personDAO).delPerson(Mockito.argThat(new IsTrueID()));
+        Mockito.verify(personDAO).deletePerson(Mockito.argThat(new IsTrueID()));
     }
 }

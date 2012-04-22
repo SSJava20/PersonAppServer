@@ -5,19 +5,24 @@
 package com.softserve.persondao;
 
 import com.softserve.person.Person;
+
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.junit.*;
+
 import static org.junit.Assert.*;
+
 import org.mockito.Mockito;
 
 /**
- *
  * @author Nubaseg
  */
-public class PersonDAOTest {
+public class PersonDAOTest
+{
 
     private org.hibernate.Session sessionMock;
     private org.hibernate.Transaction transactionMock;
@@ -26,19 +31,24 @@ public class PersonDAOTest {
     private List<Person> persons = new ArrayList<Person>();
     SessionFactory sessionFactoryMock;
     PersonDAO personDAO;
-    public PersonDAOTest() {
+
+    public PersonDAOTest()
+    {
     }
 
     @BeforeClass
-    public static void setUpClass() throws Exception {
+    public static void setUpClass() throws Exception
+    {
     }
 
     @AfterClass
-    public static void tearDownClass() throws Exception {
+    public static void tearDownClass() throws Exception
+    {
     }
 
     @Before
-    public void setUp() {
+    public void setUp()
+    {
         testid = new Long(1);
         sessionFactoryMock = Mockito.mock(org.hibernate.SessionFactory.class);
         sessionMock = Mockito.mock(org.hibernate.Session.class);
@@ -50,26 +60,30 @@ public class PersonDAOTest {
         Mockito.when(sessionMock.createCriteria(Person.class)).thenReturn(criteriaMock);
         Mockito.when(criteriaMock.list()).thenReturn(persons);
 
-        
-        personDAO = new PersonDAO(sessionFactoryMock);
+
+        personDAO = new PersonDAOOwn();
         Person person = new Person();
         person.setFirstName("Roman");
         person.setLastName("Kostyrko");
-        person.setEmail("nubaseg@gmail.com");
+        ArrayList<String> tlist = new ArrayList<String>();
+        tlist.add("nubaseg@gmail.com");
+        person.setEmail(tlist);
         persons.add(person);
     }
 
     @After
-    public void tearDown() {
+    public void tearDown()
+    {
     }
 
     /**
      * Test of addPerson method, of class PersonDAO.
      */
     @Test
-    public void testAddPerson() {
+    public void testAddPerson() throws SQLException
+    {
         Session session = sessionFactoryMock.openSession();
-        
+
         personDAO.addPerson(person);
         Mockito.verify(sessionMock).beginTransaction();
         Mockito.verify(sessionMock).save(person);
@@ -80,8 +94,9 @@ public class PersonDAOTest {
      * Test of delPerson method, of class PersonDAO.
      */
     @Test
-    public void testDelPerson() {
-        personDAO.delPerson(testid);
+    public void testDelPerson() throws SQLException
+    {
+        personDAO.deletePerson(testid);
         Mockito.verify(sessionMock).beginTransaction();
         Mockito.verify(sessionMock).get(Person.class, testid);
         Mockito.verify(sessionMock).delete(person);
@@ -92,7 +107,8 @@ public class PersonDAOTest {
      * Test of getPersonById method, of class PersonDAO.
      */
     @Test
-    public void testGetPersonById() {
+    public void testGetPersonById() throws SQLException
+    {
         person = personDAO.getPersonById(testid);
         Mockito.verify(sessionMock).get(Person.class, testid);
     }
@@ -101,8 +117,9 @@ public class PersonDAOTest {
      * Test of updatePerson method, of class PersonDAO.
      */
     @Test
-    public void testUpdatePerson() throws Exception {
-        personDAO.updatePerson(person);
+    public void testUpdatePerson() throws Exception
+    {
+        personDAO.updatePerson(person.getId(), person);
         Mockito.verify(sessionMock).beginTransaction();
         Mockito.verify(sessionMock).update(person);
         Mockito.verify(transactionMock).commit();
@@ -112,8 +129,9 @@ public class PersonDAOTest {
      * Test of getPersonList method, of class PersonDAO.
      */
     @Test
-    public void testGetPersonList() {
-        persons = personDAO.getPersonList();
+    public void testGetPersonList() throws SQLException
+    {
+        persons = (List<Person>) personDAO.getAllPersons();
         Mockito.verify(sessionMock).createCriteria(Person.class);
     }
 }
