@@ -21,6 +21,8 @@ public class Person
     private byte[] photo;
     private String filePath;
     private ArrayList<String> phone;
+
+    private ArrayList<String> m_address;
     private String comment;
 
     /**
@@ -30,6 +32,16 @@ public class Person
     {
         return id;
 
+    }
+
+    public ArrayList<String> getAddress()
+    {
+        return m_address;
+    }
+
+    public void setAddress(ArrayList<String> address)
+    {
+        this.m_address = address;
     }
 
     /**
