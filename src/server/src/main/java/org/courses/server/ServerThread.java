@@ -12,7 +12,7 @@ import org.courses.core.command.AllPersonsCommand;
 import org.courses.core.command.Command;
 import org.courses.core.command.PersonByIdCommand;
 import org.courses.core.command.deletePersonCommand;
-import org.courses.core.command.saveOrUpdateCommand;
+import org.courses.core.command.SavePersonCommand;
 import org.courses.core.dao.DAOFactory;
 import org.courses.core.domain.Person;
 
@@ -50,24 +50,24 @@ public class ServerThread implements Runnable {
 	}
 
 	private void SaveOrUpdatePerson(Person toAdd) throws Exception {
-		DAOFactory.getInstance().getPersonDAO('l').saveOrUpdate(toAdd);
+		DAOFactory.getInstance().getPersonDAO('s').addPerson(toAdd);
 	}
 
 
 	private void DeletePerson(Person toDel) throws Exception {
-		DAOFactory.getInstance().getPersonDAO('l').delPerson(toDel);
+		DAOFactory.getInstance().getPersonDAO('s').deletePerson(toDel);
 	}
 
-	private void SendPersonById(int id) throws Exception {
+	private void SendPersonById(long id) throws Exception {
 		Command command = new Command(new PersonByIdCommand(id, DAOFactory
-				.getInstance().getPersonDAO('l').getPersonById(id)));
+				.getInstance().getPersonDAO('s').getPersonById(id)));
 		String commandString = command.serialize();
 		sendCommand(commandString);
 	}
 
 	private void SendAllPersons() throws Exception {
 		Command command = new Command(new AllPersonsCommand(DAOFactory
-				.getInstance().getPersonDAO('l').getPersons()));
+				.getInstance().getPersonDAO('s').getAllPersons()));
 		String commandString = command.serialize();
 		sendCommand(commandString);
 	}
@@ -79,11 +79,12 @@ public class ServerThread implements Runnable {
 //				+ this.server.serverThreads.indexOf(this) + " :COMMAND_TYPE: "
 //				+ command.getType() + " " + command.getStringData());
 		switch (command.getType()) {
-		case Command.SAVE_OR_UPDATE_PERSON: {
+		case Command.SAVE_PERSON: {
 
-			saveOrUpdateCommand apComm = gson.fromJson(command.getStringData(),
-					saveOrUpdateCommand.class);
+			SavePersonCommand apComm = gson.fromJson(command.getStringData(),
+					SavePersonCommand.class);
 			SaveOrUpdatePerson(apComm.getPerson());
+                        SendPersonById(apComm.getPerson().getId());
 			break;
 		}
 		case Command.DELETE_PERSON: {

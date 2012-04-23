@@ -11,21 +11,21 @@ import org.courses.core.domain.Person;
  */
 public class PersonByIdCommand implements ICommand
 {
-    int Index;
+    long Index;
     Person byId;
 
-    public PersonByIdCommand(int index, Person byId)
+    public PersonByIdCommand(long index, Person byId)
     {
         Index = index;
         this.byId = byId;
     }
 
-    public int getIndex()
+    public long getIndex()
     {
         return Index;
     }
 
-    public void setIndex(int index)
+    public void setIndex(long index)
     {
         Index = index;
     }

@@ -9,18 +9,18 @@ import org.courses.core.domain.Person;
  * Time: 21:25
  * To change this template use File | Settings | File Templates.
  */
-public class saveOrUpdateCommand implements ICommand
+public class SavePersonCommand implements ICommand
 {
     private Person toSend;
 
-    public saveOrUpdateCommand(Person ts)
+    public SavePersonCommand(Person ts)
     {
         toSend = ts;
     }
 
     public int getType()
     {
-        return Command.SAVE_OR_UPDATE_PERSON;
+        return Command.SAVE_PERSON;
     }
 
     public Person getPerson()

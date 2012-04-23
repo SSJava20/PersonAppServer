@@ -12,11 +12,11 @@ public class FileCopier {
 
 	public static boolean copyFilesToResources(Person person) {
 		try {
-			String imagePath = person.getImgFilePath();
+			String imagePath = person.getPhotoFilePath();
 			String filePath = person.getFilePath();
 			if ( imagePath != null && !imagePath.equals(""))
 			{
-				person.setImgFilePath(copy(person, imagePath));
+				person.setPhotoFilePath(copy(person, imagePath));
 			}
 			if ( filePath != null && !filePath.equals(""))
 			{
@@ -38,7 +38,7 @@ public class FileCopier {
 		String newPath = RESOURCE_DIR + p.getId() + initPath;
 		
 		FileOutputStream out = new FileOutputStream(newPath);
-		out.write(p.getImgData());
+		out.write(p.getPhoto());
 		out.close();
 		return newPath;
 		

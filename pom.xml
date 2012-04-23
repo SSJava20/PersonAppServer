@@ -26,13 +26,19 @@
 				<artifactId>core</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+                        <dependency>
+				<groupId>org.courses</groupId>
+				<artifactId>server</artifactId>
+				<version>${project.version}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
 	<modules>
-		<module>src/desktopClient</module>
+		<!--<module>src/desktopClient</module>-->
 		<module>src/core</module>
 		<module>src/server</module>
+		<module>src/webClient</module>
 	</modules>
 
 	<build>
@@ -40,7 +46,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.2.2</version>
+				<version>2.3</version>
 				<configuration>
 					<descriptorRefs>
 						<descriptorRef>jar-with-dependencies</descriptorRef>

@@ -1,176 +1,411 @@
 package org.courses.core.domain;
 
-import java.io.File;
-import java.io.FileInputStream;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-
 import javax.validation.ConstraintViolation;
+import javax.validation.Valid;
 import javax.validation.Validator;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-public class Person {
-	public Person() {
-	}
+public class Person
+{
+    private long id;
+    @NotNull(message = "Name is required")
+    @Size(min = 3, message = "Name size must be more than 3")
+    private String firstName;
+    @NotNull(message = "Last name is requires")
+    @Size(min = 3, message = "Last name size must be more than 3")
+    private String lastName;
+    private Date dateOfBirth;
+    @Valid
+    private ArrayList<Email> email;
+    private String photoFilePath;
+    private byte[] photo;
+    private String filePath;
+    private byte[] fileData;
+    @Valid
+    private ArrayList<Phone> phone;
+    private ArrayList<String> m_address;
+    private String comment;
 
-	public Person(String aFirstName, String aLastName, Date date, String phone,
-			String email, String imgPath1, String filePath, String comment) {
-		setFirstName(aFirstName);
-		setLastName(aLastName);
-		setEmail(email);
-		setDate(date);
-		setPhone(phone);
-		setImgFilePath(filePath);
-		setFilePath(filePath);
-		setComment(comment);
-	}
+    public static Set<String> validate(Object object, Validator validator)
+    {
+        HashSet<String> errors = new HashSet<String>();
+        Set<ConstraintViolation<Object>> constraintViolations = validator.validate(object);
+        for (ConstraintViolation<Object> cv : constraintViolations)
+        {
+            errors.add(cv.getMessage());
+        }
+        return errors;
+    }
+      public long getId()
+    {
+        return id;
+    }
 
-	public void setImgFilePath(String imgFilePath) {
-		this.imgFilePath = imgFilePath;
-	}
+    /**
+     * @param id the id to set
+     */
+    public void setId(long id)
+    {
+        this.id = id;
+    }
 
-	public void setFilePath(String filePath) {
-		this.filePath = filePath;
-	}
+    /**
+     * @return the firstName
+     */
+    public String getFirstName()
+    {
+        return firstName;
+    }
 
-	public void loadFileData() {
-		try {
-			File file = new File(filePath);
-			FileInputStream fileInputStream = new FileInputStream(file);
+    /**
+     * @param firstName the firstName to set
+     */
+    public void setFirstName(String firstName)
+    {
+        this.firstName = firstName;
+    }
 
-			fileData = new byte[(int) file.length()];
-			fileInputStream.read(fileData);
-		} catch (Exception e) {
-			// System.err.println("Fail to load file data " + e.getMessage());
-			e.printStackTrace();
-		}
-	}
+    /**
+     * @return the lastName
+     */
+    public String getLastName()
+    {
+        return lastName;
+    }
 
-	public void loadImageData() {
-		try {
-			File file = new File(imgFilePath);
-			FileInputStream fileInputStream = new FileInputStream(file);
+    /**
+     * @param lastName the lastName to set
+     */
+    public void setLastName(String lastName)
+    {
+        this.lastName = lastName;
+    }
 
-			imageData = new byte[(int) file.length()];
-			fileInputStream.read(imageData);
-		} catch (Exception e) {
-			// System.err.println("Fail to load image data " + e.getMessage());
-			e.printStackTrace();
-		}
-	}
+    /**
+     * @return the dateOfBirth
+     */
+    public Date getDateOfBirth()
+    {
+        return dateOfBirth;
+    }
 
-	public byte[] getImgData() {
-		return imageData;
-	}
+    /**
+     * @param dateOfBirth the dateOfBirth to set
+     */
+    public void setDateOfBirth(Date dateOfBirth)
+    {
+        this.dateOfBirth = dateOfBirth;
+    }
 
-	public byte[] getFileData() {
-		return fileData;
-	}
+    /**
+     * @return the email
+     */
+    public ArrayList<Email> getEmail()
+    {
+        return email;
+    }
 
-	public void setImgData(byte[] imgArr) {
-		imageData = imgArr;
-	}
+    /**
+     * @param email the email to set
+     */
+    public void setEmail(ArrayList<Email> email)
+    {
+        this.email = email;
+    }
 
-	private int id;
+    /**
+     * @return the photoFilePath
+     */
+    public String getPhotoFilePath()
+    {
+        return photoFilePath;
+    }
 
-	@NotNull(message = "Name is required")
-	@Size(min = 3, message = "Name size must be more than 3")
-	private String firstName;
+    /**
+     * @param photoFilePath the photoFilePath to set
+     */
+    public void setPhotoFilePath(String photoFilePath)
+    {
+        this.photoFilePath = photoFilePath;
+    }
 
-	@NotNull(message = "Last name is requires")
-	@Size(min = 3, message = "Last name size must be more than 3")
-	private String lastName;
+    /**
+     * @return the photo
+     */
+    public byte[] getPhoto()
+    {
+        return photo;
+    }
 
-	@NotNull(message = "Phone is required")
-	@Pattern(regexp = "^((8|\\+7)[\\- ]?)?(\\(?\\d{3}\\)?[\\- ]?)?[\\d\\- ]{7,10}$", message = "phone is invalid")
-	private String phone;
+    /**
+     * @param photo the photo to set
+     */
+    public void setPhoto(byte[] photo)
+    {
+        this.photo = photo;
+    }
 
-	@NotNull(message = "Email is required")
-	@Pattern(regexp = "^([a-zA-Z0-9]+[\\w.]*[a-zA-Z0-9]+@[a-zA-Z0-9]+[\\w.]*[a-zA-Z0-9]+\u002E[a-zA-Z0-9]{1,4})$", message = "email is invalid")
-	private String email;
+    /**
+     * @return the filePath
+     */
+    public String getFilePath()
+    {
+        return filePath;
+    }
 
-	private String comment;
-	private byte imageData[];
-	private byte fileData[];
-	private String imgFilePath;
-	private String filePath;
-	private Date date;
+    /**
+     * @param filePath the filePath to set
+     */
+    public void setFilePath(String filePath)
+    {
+        this.filePath = filePath;
+    }
 
-	public static Set<String> validate(Object object, Validator validator) {
-		HashSet<String> errors = new HashSet<String>();
-		Set<ConstraintViolation<Object>> constraintViolations = validator
-				.validate(object);
-		for (ConstraintViolation<Object> cv : constraintViolations) {
-			errors.add(cv.getMessage());
-		}
-		return errors;
-	}
+    /**
+     * @return the fileData
+     */
+    public byte[] getFileData()
+    {
+        return fileData;
+    }
 
-	public int getId() {
-		return id;
-	}
+    /**
+     * @param fileData the fileData to set
+     */
+    public void setFileData(byte[] fileData)
+    {
+        this.fileData = fileData;
+    }
 
-	public void setId(int iD) {
-		id = iD;
-	}
+    /**
+     * @return the phone
+     */
+    public ArrayList<Phone> getPhone()
+    {
+        return phone;
+    }
 
-	public String getEmail() {
-		return email;
-	}
+    /**
+     * @param phone the phone to set
+     */
+    public void setPhone(ArrayList<Phone> phone)
+    {
+        this.phone = phone;
+    }
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    /**
+     * @return the m_address
+     */
+    public ArrayList<String> getM_address()
+    {
+        return m_address;
+    }
 
-	public String getPhone() {
-		return phone;
-	}
+    /**
+     * @param m_address the m_address to set
+     */
+    public void setM_address(ArrayList<String> m_address)
+    {
+        this.m_address = m_address;
+    }
 
-	public void setPhone(String phone) {
-		this.phone = phone;
-	}
+    /**
+     * @return the comment
+     */
+    public String getComment()
+    {
+        return comment;
+    }
 
-	public String getFirstName() {
-		return firstName;
-	}
-
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
-
-	public String getLastName() {
-		return lastName;
-	}
-
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
-
-	public Date getDate() {
-		return date;
-	}
-
-	public void setDate(Date date) {
-		this.date = date;
-	}
-
-	public String getImgFilePath() {
-		imageData = getImgData();
-		return imgFilePath;
-	}
-
-	public String getFilePath() {
-		return filePath;
-	}
-
-	public String getComment() {
-		return comment;
-	}
-
-	public void setComment(String comment) {
-		this.comment = comment;
-	}
+    /**
+     * @param comment the comment to set
+     */
+    public void setComment(String comment)
+    {
+        this.comment = comment;
+    }
 }
+//package org.courses.core.domain;
+//
+//import java.io.File;
+//import java.io.FileInputStream;
+//import java.util.Date;
+//import java.util.HashSet;
+//import java.util.Set;
+//
+//import javax.validation.ConstraintViolation;
+//import javax.validation.Validator;
+//import javax.validation.constraints.NotNull;
+//import javax.validation.constraints.Pattern;
+//import javax.validation.constraints.Size;
+//
+//public class Person {
+//
+//    public Person() {
+//    }
+//
+//    public Person(String aFirstName, String aLastName, Date date, String phone,
+//            String email, String imgPath1, String filePath, String comment) {
+//        setFirstName(aFirstName);
+//        setLastName(aLastName);
+//        setEmail(email);
+//        setDate(date);
+//        setPhone(phone);
+//        setImgFilePath(filePath);
+//        setFilePath(filePath);
+//        setComment(comment);
+//    }
+//
+//    public void setImgFilePath(String imgFilePath) {
+//        this.imgFilePath = imgFilePath;
+//    }
+//
+//    public void setFilePath(String filePath) {
+//        this.filePath = filePath;
+//    }
+//
+//    public void loadFileData() {
+//        try {
+//            if (filePath == null) {
+//                return;
+//            }
+//            File file = new File(filePath);
+//            FileInputStream fileInputStream = new FileInputStream(file);
+//
+//            fileData = new byte[(int) file.length()];
+//            fileInputStream.read(fileData);
+//        } catch (Exception e) {
+//            // System.err.println("Fail to load file data " + e.getMessage());
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    public void loadImageData() {
+//        try {
+//            if (imgFilePath == null) {
+//                return;
+//            }
+//            File file = new File(imgFilePath);
+//            FileInputStream fileInputStream = new FileInputStream(file);
+//
+//            imageData = new byte[(int) file.length()];
+//            fileInputStream.read(imageData);
+//        } catch (Exception e) {
+//            // System.err.println("Fail to load image data " + e.getMessage());
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    public byte[] getImgData() {
+//        return imageData;
+//    }
+//
+//    public byte[] getFileData() {
+//        return fileData;
+//    }
+//
+//    public void setImgData(byte[] imgArr) {
+//        imageData = imgArr;
+//    }
+//    private int id;
+//   
+//    private String firstName;
+//
+//    private String lastName;
+//   
+//    private String phone;
+//    
+//    private String email;
+//    private String comment;
+//    private byte imageData[];
+//    private byte fileData[];
+//    private String imgFilePath;
+//    private String filePath;
+//    private Date date;
+//
+//    public static Set<String> validate(Object object, Validator validator) {
+//        HashSet<String> errors = new HashSet<String>();
+//        Set<ConstraintViolation<Object>> constraintViolations = validator.validate(object);
+//        for (ConstraintViolation<Object> cv : constraintViolations) {
+//            errors.add(cv.getMessage());
+//        }
+//        return errors;
+//    }
+//
+//    public int getId() {
+//        return id;
+//    }
+//
+//    public void setId(int iD) {
+//        id = iD;
+//    }
+//
+//    public String getEmail() {
+//        return email;
+//    }
+//
+//    public void setEmail(String email) {
+//        this.email = email;
+//    }
+//
+//    public String getPhone() {
+//        return phone;
+//    }
+//
+//    public void setPhone(String phone) {
+//        this.phone = phone;
+//    }
+//
+//    public String getFirstName() {
+//        return firstName;
+//    }
+//
+//    public void setFirstName(String firstName) {
+//        this.firstName = firstName;
+//    }
+//
+//    public String getLastName() {
+//        return lastName;
+//    }
+//
+//    public void setLastName(String lastName) {
+//        this.lastName = lastName;
+//    }
+//
+//    public Date getDate() {
+//        return date;
+//    }
+//
+//    public void setDate(Date date) {
+//        this.date = date;
+//    }
+//
+//    public String getImgFilePath() {
+//        imageData = getImgData();
+//        return imgFilePath;
+//    }
+//
+//    public String getFilePath() {
+//        return filePath;
+//    }
+//
+//    public String getComment() {
+//        return comment;
+//    }
+//
+//    public void setComment(String comment) {
+//        this.comment = comment;
+//    }
+//}
+// NEW 
+
+    /**
+     * @return the id
+     */
+  

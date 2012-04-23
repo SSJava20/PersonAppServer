@@ -38,7 +38,10 @@ public class MainServer implements Runnable {
 	public void deleteServerThread(ServerThread toDel) {
 		serverThreads.remove(toDel);
 	}
-
+        public void stop()
+        {
+            mainServerThread.interrupt();
+        }
 	public static void main(String[] args) {
 		int port = DEFAULT_PORT;
 		String ip = DEFAULT_IP;

@@ -5,7 +5,7 @@ import com.google.gson.Gson;
 
 public class Command
 {
-    static public final int SAVE_OR_UPDATE_PERSON = 2;
+    static public final int SAVE_PERSON = 2;
     static public final int DELETE_PERSON = 3;
     static public final int PERSON_BY_ID = 4;
     static public final int ALL_PERSONS = 5;

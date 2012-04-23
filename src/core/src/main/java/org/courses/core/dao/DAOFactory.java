@@ -16,6 +16,7 @@ public class DAOFactory
 
     private static IPersonDAO personDAO = null;
     private static IPersonDAO personDAONW = null;
+    private static IPersonDAO personDAOS = null;
 
 
     public static DAOFactory getInstance()
@@ -34,7 +35,7 @@ public class DAOFactory
             case 'l':
             {
                 if (personDAO == null)
-                    personDAO = new PersonDAOImpl();
+//                    personDAO = new PersonDAOHiber();
                 return personDAO;
             }
             case 'n':
@@ -42,6 +43,12 @@ public class DAOFactory
                 if (personDAONW == null)
                     personDAONW = new NetworkPersonDAO(new Socket(InetAddress.getByName("127.0.0.1"), 3224));
                 return personDAONW;
+            }
+            case 's':
+            {
+                if (personDAOS == null)
+                    personDAOS = new PersonDAO_SQL("person_db", "root", "");
+                return personDAOS;
             }
             default:
                 return personDAO;

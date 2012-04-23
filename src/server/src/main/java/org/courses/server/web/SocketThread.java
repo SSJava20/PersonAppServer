@@ -16,6 +16,7 @@ import org.courses.core.domain.Person;
 import org.eclipse.jetty.websocket.WebSocket.Connection;
 
 import com.google.gson.Gson;
+import java.util.List;
 
 
 /**
@@ -70,18 +71,18 @@ public class SocketThread implements Runnable {
 
 		if (type.equals("save")) {
 			Person p = gson.fromJson(data, Person.class);
-			dao.saveOrUpdate(p);
+			dao.addPerson(p);
 		}
 		if (type.equals("loadPersons")) {
-			ArrayList<Person> persons = dao.getPersons();
-			convertImageData(persons);
-			changeFilePath(persons);
+			List<Person> persons = dao.getAllPersons();
+//			convertImageData(persons);
+//			changeFilePath(persons);
 			connection.sendMessage(gson.toJson(persons.toArray()));
 		}
 		if (type.equals("delete")) {
 			Person toDel = new Person();
 			toDel.setId(Integer.parseInt(data));
-			dao.delPerson(toDel);
+			dao.deletePerson(toDel);
 		}
 	}
 
@@ -91,15 +92,15 @@ public class SocketThread implements Runnable {
 	 * @param persons
 	 * @throws IOException
 	 */
-	private void convertImageData(ArrayList<Person> persons) throws IOException {
-		for (int i = 0; i < persons.size(); i++) {
-			Person p = persons.get(i);
-			byte[] data = p.getImgData();
-			if (data != null) {
-				p.setImgData(Base64.encodeBase64(p.getImgData()));
-			}
-		}
-	}
+//	private void convertImageData(ArrayList<Person> persons) throws IOException {
+//		for (int i = 0; i < persons.size(); i++) {
+//			Person p = persons.get(i);
+//			byte[] data = p.getImgData();
+//			if (data != null) {
+//				p.setImgData(Base64.encodeBase64(p.getImgData()));
+//			}
+//		}
+//	}
 
 	/**
 	 * Change filepath to web filepath
@@ -107,15 +108,15 @@ public class SocketThread implements Runnable {
 	 * @param persons
 	 * @throws IOException
 	 */
-	private void changeFilePath(ArrayList<Person> persons) throws IOException {
-		for (int i = 0; i < persons.size(); i++) {
-			Person p = persons.get(i);
-			String path = p.getFilePath();
-			if (path != null) {
-				// path = path.substring(1);
-				path = PUB_RESOURCES_DIR + path;
-				p.setFilePath(path);
-			}
-		}
-	}
+//	private void changeFilePath(ArrayList<Person> persons) throws IOException {
+//		for (int i = 0; i < persons.size(); i++) {
+//			Person p = persons.get(i);
+//			String path = p.getFilePath();
+//			if (path != null) {
+//				// path = path.substring(1);
+//				path = PUB_RESOURCES_DIR + path;
+//				p.setFilePath(path);
+//			}
+//		}
+//	}
 }
