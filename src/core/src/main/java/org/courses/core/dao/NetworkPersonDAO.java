@@ -20,6 +20,7 @@ import org.courses.core.domain.Person;
 
 import com.google.gson.Gson;
 import java.sql.SQLException;
+import java.util.*;
 
 /**
  * Created by IntelliJ IDEA. User: stvad Date: 20.03.12 Time: 22:24 To change
@@ -27,20 +28,21 @@ import java.sql.SQLException;
  */
 public class NetworkPersonDAO implements IPersonDAO, Runnable
 {
-    
+
+    Timer timer = null;
     protected ArrayList<Person> lastGotCollection;
     protected Person latGotPerson;
     boolean complete;
     Socket mySocket;
     Thread listenThread;
-    
+
     public NetworkPersonDAO(Socket mySocket)
     {
         this.mySocket = mySocket;
         listenThread = new Thread(this);
         listenThread.start();
     }
-    
+
     private void sendCommand(String commandString)
     {
         PrintWriter out;
@@ -57,7 +59,7 @@ public class NetworkPersonDAO implements IPersonDAO, Runnable
             e.printStackTrace();
         }
     }
-    
+
     private void operateCommand(String getStringCommand)
     {
         Gson gson = new Gson();
@@ -83,19 +85,19 @@ public class NetworkPersonDAO implements IPersonDAO, Runnable
             default:
         }
     }
-    
+
     private void GetAllPersons(Collection got)
     {
         lastGotCollection = (ArrayList<Person>) got;
         complete = true;
     }
-    
+
     private void GetPersonById(Person got)
     {
         latGotPerson = got;
         complete = true;
     }
-    
+
     public void run()
     {
         Scanner in = null;
@@ -128,54 +130,70 @@ public class NetworkPersonDAO implements IPersonDAO, Runnable
         }
         Thread.currentThread().interrupt();
     }
-    
+
     @Override
     public void addPerson(Person person) throws SQLException
     {
         Command updateCommand = new Command(new SavePersonCommand(person));
         sendCommand(updateCommand.serialize());
-        complete = false;
-        while (!complete)
+        waitResponse();
+        if (latGotPerson != null)
         {
+            person.setId(latGotPerson.getId());
         }
-        person.setId(latGotPerson.getId());
     }
-    
+
     @Override
     public List<Person> getAllPersons() throws SQLException
     {
         Command personByIdCommand = new Command(new AllPersonsCommand(null));
         sendCommand(personByIdCommand.serialize());
-        complete = false;
-        while (!complete)
-        {
-        }
+        waitResponse();
         return lastGotCollection;
     }
-    
+
     @Override
     public void deletePerson(Person person) throws SQLException
     {
         Command delCommand = new Command(new deletePersonCommand(person));
         sendCommand(delCommand.serialize());
     }
-    
+
     @Override
     public Person getPersonById(long person_id) throws SQLException
     {
         Command personByIdCommand = new Command(new PersonByIdCommand(
                 person_id, null));
         sendCommand(personByIdCommand.serialize());
-        complete = false;
-        while (!complete)
-        {
-        }
+        waitResponse();
         return latGotPerson;
     }
-    
+
     @Override
     public void updatePerson(long person_id, Person person) throws SQLException
     {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void waitResponse()
+    {
+        complete = false;
+        timer = new Timer();
+        timer.schedule(new StopWait(), 1000);
+
+        while (!complete)
+        {
+        }
+        timer.cancel();
+    }
+
+    class StopWait extends TimerTask
+    {
+
+        @Override
+        public void run()
+        {
+//            complete = true;
+        }
     }
 }

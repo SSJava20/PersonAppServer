@@ -63,7 +63,7 @@ public class ValidatorTest
         String lastName = "Ga58_lkovsk$y";
 
         m_person.setPhone(phones);
-        m_person.setEmail(emails);
+        m_person.setM_address(emails);
         m_person.setFirstName(firstName);
         m_person.setLastName(lastName);
 

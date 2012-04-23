@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.courses.server.web;
 
@@ -16,82 +16,99 @@ import org.courses.core.domain.Person;
 import org.eclipse.jetty.websocket.WebSocket.Connection;
 
 import com.google.gson.Gson;
+import java.util.Date;
 import java.util.List;
-
+import org.courses.core.domain.Phone;
 
 /**
  * @author NGAL version 26.03.2012
  */
-public class SocketThread implements Runnable {
-	private Connection connection;
-	private BufferedReader reader;
-	Gson gson = new Gson();
+public class SocketThread implements Runnable
+{
 
-	/**
-	 * @throws IOException
-	 * 
-	 */
-	public SocketThread(Connection conn) throws IOException {
-		connection = conn;
-	}
+    private Connection connection;
+    private BufferedReader reader;
+    Gson gson = new Gson();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Runnable#run()
-	 */
-	public void run() {
-		try {
-			while (true) {
-				String str = reader.readLine();
-				operateCommand(str);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+    /**
+     * @throws IOException
+     *
+     */
+    public SocketThread(Connection conn) throws IOException
+    {
+        connection = conn;
+    }
 
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see java.lang.Runnable#run()
+     */
+    public void run()
+    {
+        try
+        {
+            while (true)
+            {
+                String str = reader.readLine();
+                operateCommand(str);
+            }
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+        }
 
-	/**
-	 * @param str
-	 * @throws IOException
-	 */
-	private void operateCommand(String str) throws IOException {
-		connection.sendMessage(str);
-	}
+    }
 
-	/**
-	 * @param data
-	 * @throws Exception
-	 */
-	public void operateFromWeb(String message) throws Exception {
-		IPersonDAO dao = DAOFactory.getInstance().getPersonDAO('l');
-		String type = message.substring(0, message.indexOf("|"));
-		String data = message.substring(message.indexOf("|") + 1);
+    /**
+     * @param str
+     * @throws IOException
+     */
+    private void operateCommand(String str) throws IOException
+    {
+        connection.sendMessage(str);
+    }
 
-		if (type.equals("save")) {
-			Person p = gson.fromJson(data, Person.class);
-			dao.addPerson(p);
-		}
-		if (type.equals("loadPersons")) {
-			List<Person> persons = dao.getAllPersons();
+    /**
+     * @param data
+     * @throws Exception
+     */
+    public void operateFromWeb(String message) throws Exception
+    {
+        IPersonDAO dao = DAOFactory.getInstance().getPersonDAO('s');
+        String type = message.substring(0, message.indexOf("|"));
+        String data = message.substring(message.indexOf("|") + 1);
+
+        if (type.equals("save"))
+        {
+//            Person person = new Person(43, "dfuc", "dffd", new Date(), null, null, null, type);
+//            ArrayList<Phone> phone = new ArrayList<Phone>();
+//            phone.add(new Phone("phoneNUmber223"));
+//            person.setPhone(phone);
+//            System.out.println(gson.toJson(person));
+            Person p = gson.fromJson(data, Person.class);
+            dao.addPerson(p);
+        }
+        if (type.equals("loadPersons"))
+        {
+            List<Person> persons = dao.getAllPersons();
 //			convertImageData(persons);
 //			changeFilePath(persons);
-			connection.sendMessage(gson.toJson(persons.toArray()));
-		}
-		if (type.equals("delete")) {
-			Person toDel = new Person();
-			toDel.setId(Integer.parseInt(data));
-			dao.deletePerson(toDel);
-		}
-	}
-
-	/**
-	 * Convert person image to base64 array
-	 * 
-	 * @param persons
-	 * @throws IOException
-	 */
+            connection.sendMessage(gson.toJson(persons.toArray()));
+        }
+        if (type.equals("delete"))
+        {
+            Person toDel = new Person();
+            toDel.setId(Integer.parseInt(data));
+            dao.deletePerson(toDel);
+        }
+    }
+    /**
+     * Convert person image to base64 array
+     *
+     * @param persons
+     * @throws IOException
+     */
 //	private void convertImageData(ArrayList<Person> persons) throws IOException {
 //		for (int i = 0; i < persons.size(); i++) {
 //			Person p = persons.get(i);
@@ -101,13 +118,12 @@ public class SocketThread implements Runnable {
 //			}
 //		}
 //	}
-
-	/**
-	 * Change filepath to web filepath
-	 * 
-	 * @param persons
-	 * @throws IOException
-	 */
+    /**
+     * Change filepath to web filepath
+     *
+     * @param persons
+     * @throws IOException
+     */
 //	private void changeFilePath(ArrayList<Person> persons) throws IOException {
 //		for (int i = 0; i < persons.size(); i++) {
 //			Person p = persons.get(i);

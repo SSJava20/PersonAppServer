@@ -14,8 +14,10 @@ import java.util.Collection;
 import java.util.List;
 import org.courses.core.dao.DAOFactory;
 import org.courses.core.dao.IPersonDAO;
-import org.courses.core.dao.PersonDAO_SQL;
+import org.courses.core.domain.Email;
+//import org.courses.core.dao.PersonDAO_SQL;
 import org.courses.core.domain.Person;
+import org.courses.core.domain.Phone;
 import org.junit.*;
 import static org.junit.Assert.*;
 import org.junit.runner.RunWith;
@@ -66,8 +68,19 @@ public class PersonDAO_SQLTest
     public void testAddPerson() throws Exception
     {
         System.out.println("addPerson");
+        ArrayList<Phone> phones = new ArrayList<Phone>();
+        ArrayList<Email> emails = new ArrayList<Email>();
+        phones.add(new Phone("545245542"));
+        phones.add(new Phone("5452455424"));
+        emails.add(new Email("qwe@Qwe.ru"));
+        emails.add(new Email("qwe@Qwe.ru2"));
+
         Person person = new Person();
         person.setFirstName("FUCK");
+        person.setPhone(phones);
+        person.setM_address(emails);
+
+
         DAO.addPerson(person);
     }
 
@@ -78,8 +91,18 @@ public class PersonDAO_SQLTest
     public void testGetPersonById() throws Exception
     {
         System.out.println("getPersonById");
+
+        ArrayList<Phone> phones = new ArrayList<Phone>();
+        ArrayList<Email> emails = new ArrayList<Email>();
+        phones.add(new Phone("545245542"));
+        phones.add(new Phone("5452455424"));
+        emails.add(new Email("qwe@Qwe.ru"));
+        emails.add(new Email("qwe@Qwe.ru2"));
+
         Person person = new Person();
         person.setFirstName("FUCK");
+        person.setPhone(phones);
+        person.setM_address(emails);
         DAO.addPerson(person);
         Person newPerson = DAO.getPersonById(person.getId());
 
@@ -139,7 +162,7 @@ public class PersonDAO_SQLTest
 
     private void clearAll() throws SQLException
     {
-        ((PersonDAO_SQL) (DAO)).clearAllTables();
+//        ((PersonDAO_SQL) (DAO)).clearAllTables();
     }
 
     private boolean equalPersons(Person p1, Person p2)
@@ -148,6 +171,21 @@ public class PersonDAO_SQLTest
         assertEquals(p1.getFirstName(), p2.getFirstName());
         assertEquals(p1.getLastName(), p2.getLastName());
         assertEquals(p1.getPhotoFilePath(), p2.getPhotoFilePath());
+        if (p1.getPhone() != null)
+        {
+            for (int i = 0; i < p1.getPhone().size(); i++)
+            {
+                p1.getPhone().get(i).getM_phone().equals(p2.getPhone().get(i).getM_phone());
+            }
+        }
+        if (p1.getM_address() != null)
+        {
+            for (int i = 0; i < p1.getM_address().size(); i++)
+            {
+                p1.getM_address().get(i).getM_email().equals(p2.getM_address().get(i).getM_email());
+            }
+        }
+
         return true;
     }
 
@@ -156,9 +194,9 @@ public class PersonDAO_SQLTest
     {
         Object[][] data = new Object[][]
         {
-            {
-                's'
-            },
+//            {
+//                's'
+//            },
             {
                 'n'
             },

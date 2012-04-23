@@ -1,210 +1,239 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<head>
-<title>Ajax client</title>
-<style>
-.button {
-	border: 1px solid #006;
-	background: #ccf;
-	width: 100px;
-	height: 100px;
-	font-size: 50;
-}
-</style>
-<script type="text/javascript">
-	var socket;
-	if (socket == null) {
-		socket = new WebSocket("ws://localhost:8001/");
-	}
-	socket.onopen = function() {
-		window.get.innerHTML = "Socket opened";
-	}
-	socket.onmessage = function(e) {
+    <head>
+        <title>Ajax client</title>
+        <style>
+            .button {
+                border: 1px solid #006;
+                background: #ccf;
+                width: 100px;
+                height: 100px;
+                font-size: 50;
+            }
+        </style>
+        <script type="text/javascript">
+            var socket;
+            if (socket == null) {
+                socket = new WebSocket("ws://localhost:8001/");
+            }
+            socket.onopen = function() {
+                window.get.innerHTML = "Socket opened";
+            }
+            socket.onmessage = function(e) {
 		
-		//window.get.innerHTML = "Please wait...";
-		parse(e.data);
-	}
-	socket.onclose = function(e) {
-		window.get.innerHTML = "Socket closed";
-	}
+                //window.get.innerHTML = "Please wait...";
+                parse(e.data);
+            }
+            socket.onclose = function(e) {
+                window.get.innerHTML = "Socket closed";
+            }
 
-	function sendmsg(message) {
-		socket.send(message);
-		window.send.innerHTML = message;
-	}
-	function sendPerson() {
-		var newPerson = new Object();
-		newPerson.id = document.getElementById("inpId").value;
-		newPerson.firstName = document.getElementById("inpName").value;
-		newPerson.lastName = document.getElementById("inpLName").value;
-		newPerson.phone = document.getElementById("inpPhone").value;
-		newPerson.email = document.getElementById("inpEmail").value;
-		sendmsg("save|" + JSON.stringify(newPerson));
-		document.getElementById('modTable').style.visibility = "hidden";
-	}
-	/**
-	 * showTable
-	 * Show modification person table
-	 * @param {}  
-	 */
-	function showTable() {
-		document.getElementById('modTable').style.visibility = "visible";
-	}
-	function loadPersons() {
-		var message = 'loadPersons|';
-		sendmsg(message);
-	}
-	function parse(data) {
-		obj = JSON.parse(data);
-		var table = document.getElementById("personsTable");
-		// clear person table
-		while (table.rows.length != 1) {
-			table.deleteRow(-1);
-		}
-		// add every person to table row
-		for ( var i = 0; i < obj.length; i++) {
-			generateRow(obj[i]);
-		}
-	}
-	function generateRow(person) {
-		var table = document.getElementById("personsTable");
-		var row = table.insertRow(-1);
-		var idCell = row.insertCell(-1);
-		var fNameCell = row.insertCell(-1);
-		var lNameCell = row.insertCell(-1);
-		var emailCell = row.insertCell(-1);
-		var phoneCell = row.insertCell(-1);
-		var editBtnCell = row.insertCell(-1);
-		var delBtnCell = row.insertCell(-1);
-		var imageCell = row.insertCell(-1);
-		var fileCell = row.insertCell(-1);
+            function sendmsg(message) {
+                socket.send(message);
+                window.send.innerHTML = message;
+            }
+            function sendPerson() {
+                var newPerson = new Person();
+                newPerson.id = document.getElementById("inpId").value;
+                newPerson.firstName = document.getElementById("inpName").value;
+                newPerson.lastName = document.getElementById("inpLName").value;
+                newPerson.phone[0] = new Phone(document.getElementById("inpPhone").value);
+                newPerson.m_address[0] = new M_address(document.getElementById("inpEmail").value);
+                sendmsg("save|" + JSON.stringify(newPerson));
+                document.getElementById('modTable').style.visibility = "hidden";
+            }
+            /**
+             * showTable
+             * Show modification person table
+             * @param {}  
+             */
+            function showTable() {
+                document.getElementById('modTable').style.visibility = "visible";
+            }
+            function loadPersons() {
+                var message = 'loadPersons|';
+                sendmsg(message);
+            }
+            function parse(data) {
+                obj = JSON.parse(data);
+                var table = document.getElementById("personsTable");
+                // clear person table
+                while (table.rows.length != 1) {
+                    table.deleteRow(-1);
+                }
+                // add every person to table row
+                for ( var i = 0; i < obj.length; i++) {
+                    generateRow(obj[i]);
+                }
+            }
+            function generateRow(person) {
+                var table = document.getElementById("personsTable");
+                var row = table.insertRow(-1);
+                var idCell = row.insertCell(-1);
+                var fNameCell = row.insertCell(-1);
+                var lNameCell = row.insertCell(-1);
+                var emailCell = row.insertCell(-1);
+                var phoneCell = row.insertCell(-1);
+                var fileCell = row.insertCell(-1);
+                var imageCell = row.insertCell(-1);
+                var editBtnCell = row.insertCell(-1);
+                var delBtnCell = row.insertCell(-1);
+                
 
-		editBtnCell.appendChild(generateBtn("edit", person.id));
-		delBtnCell.appendChild(generateBtn("del", person.id));
+                editBtnCell.appendChild(generateBtn("edit", person.id));
+                delBtnCell.appendChild(generateBtn("del", person.id));
 
-		idCell.innerHTML = person.id;
-		fNameCell.innerHTML = person.firstName;
-		lNameCell.innerHTML = person.lastName;
-		emailCell.innerHTML = person.email;
-		phoneCell.innerHTML = person.phone;
+                idCell.innerHTML = person.id;
+                fNameCell.innerHTML = person.firstName;
+                lNameCell.innerHTML = person.lastName;
+                var emails = "";
+                for (i = 0; i < person.m_address.length; i++) {
+                    emails += person.m_address[i].m_email
+                }
+                emailCell.innerHTML = emails;
+                
+                var phones = "";
+                for (i = 0; i < person.phone.length; i++) {
+                    phones += person.phone[i].m_phone;
+                }
+                phoneCell.innerHTML = phones;
 
-		if (person.filePath != undefined) {
-			fileCell.innerHTML = '<a href="'+person.filePath+'">Download File</a>';
-		}
-		if (person.imageData != undefined) {
-			var img = document.createElement('img');
-			img.src = 'data:image/jpg;base64,' + arrToString(person.imageData);
-			img.width = 400;
-			img.height = 250;
-			imageCell.appendChild(img);
-		}
-	}
-	function arrToString(byteArray) {
-		var str = '';
-		for ( var i = 0; i < byteArray.length; i++)
-			str += byteArray[i] <= 0x7F ? byteArray[i] === 0x25 ? "%25" : // %
-			String.fromCharCode(byteArray[i]) : "%"
-					+ byteArray[i].toString(16).toUpperCase();
-		return decodeURIComponent(str);
-	};
-	function generateBtn(onclickType, id) {
-		var Button = document.createElement("input");
-		Button.setAttribute("type", "button");
-		Button.setAttribute("id", id);
-		Button.setAttribute("value", onclickType);
-		Button.setAttribute("onclick", onclickType + "Person(" + Button.id
-				+ ");");
-		return Button;
-	}
+                if (person.filePath != undefined) {
+                    fileCell.innerHTML = '<a href="'+person.filePath+'">Download File</a>';
+                }
+                if (person.imageData != undefined) {
+                    var img = document.createElement('img');
+                    img.src = 'data:image/jpg;base64,' + arrToString(person.imageData);
+                    img.width = 400;
+                    img.height = 250;
+                    imageCell.appendChild(img);
+                }
+            }
+            function arrToString(byteArray) {
+                var str = '';
+                for ( var i = 0; i < byteArray.length; i++)
+                    str += byteArray[i] <= 0x7F ? byteArray[i] === 0x25 ? "%25" : // %
+                String.fromCharCode(byteArray[i]) : "%"
+                    + byteArray[i].toString(16).toUpperCase();
+                return decodeURIComponent(str);
+            };
+            function generateBtn(onclickType, id) {
+                var Button = document.createElement("input");
+                Button.setAttribute("type", "button");
+                Button.setAttribute("id", id);
+                Button.setAttribute("value", onclickType);
+                Button.setAttribute("onclick", onclickType + "Person(" + Button.id
+                    + ");");
+                return Button;
+            }
 
-	/**
-	 * delPerson
-	 * @param {int} id person to delete 
-	 */
-	function delPerson(id) {
-		var message = "delete|" + id;
-		sendmsg(message);
-	}
-	/**
-	 * editerson
-	 * @param {int} id person to edit
-	 */
-	function editPerson(id) {
-		showTable();
-	}
+            /**
+             * delPerson
+             * @param {int} id person to delete 
+             */
+            function delPerson(id) {
+                var message = "delete|" + id;
+                sendmsg(message);
+            }
+            /**
+             * editerson
+             * @param {int} id person to edit
+             */
+            function editPerson(id) {
+                showTable();
+            }
 
-	function upload() {
-		alert("upload");
-		var up = document.getElementById("FileUpload");
-		up.nodeType;
-	}
-</script>
-</head>
-<body>
-	<table>
-		<tr>
-			<td>
-				<table id="personsTable">
-					<tr>
-						<td>ID</td>
-						<td>Name</td>
-						<td>LastName</td>
-						<td>Email</td>
-						<td>Phone</td>
-						<td>File</td>
-					</tr>
-				</table>
-			</td>
-			<td><table id="modTable">
-					<tr>
-						<td>ID</td>
-						<td><input id="inpId" type="text" maxlength="20" value="0" /></td>
-					</tr>
-					<tr>
-						<td>Name</td>
-						<td><input id="inpName" type="text" maxlength="20"
-							value="TestName" /></td>
-					</tr>
-					<tr>
-						<td>Last Name</td>
-						<td><input id="inpLName" type="text" maxlength="20"
-							value="TestLastName" /></td>
-					</tr>
-					<tr>
-						<td>Email</td>
-						<td><input id="inpEmail" type="text" maxlength="20"
-							value="qwe@qwe.ru" /></td>
-					</tr>
-					<tr>
-						<td>Phone</td>
-						<td><input id="inpPhone" type="text" maxlength="20"
-							value="89261234567" /></td>
-					</tr>
-					<tr>
-						<td><input type="button" value="ok" onclick="sendPerson()" /></td>
-					</tr>
-				</table></td>
-		</tr>
-	</table>
-	<table>
-		<tr>
-			<td><input id="loadPersons" type=button value="Load persons"
-				onclick="loadPersons()" /></td>
-			<td><input id="Button1" type=button value="Add person"
-				onclick="showTable()" /></td>
-		</tr>
-	</table>
-	<pre id="get">GET</pre>
-	<pre id="send">SEND</pre>
+            function upload() {
+                alert("upload");
+                var up = document.getElementById("FileUpload");
+                up.nodeType;
+            }
+        
+            // Person object
+            function Person(){
+                this.id;
+                this.firstname;
+                this.secondname;
+                this.phone = new Array();
+                this.m_address = new Array();
+            }
+            
+            function Phone(number)
+            {
+                this.m_phone = number;
+            }
+            
+            function M_address(email)
+            {
+                this.m_email = email;
+            }
+        </script>
+    </head>
+    <body>
+        <table>
+            <tr>
+                <td>
+                    <table id="personsTable" border="1">
+                        <tr>
+                            <td>ID</td>
+                            <td>Name</td>
+                            <td>LastName</td>
+                            <td>Email</td>
+                            <td>Phone</td>
+                            <td>File</td>
+                        </tr>
+                    </table>
+                </td>
+                <td><table id="modTable">
+                        <tr>
+                            <td>ID</td>
+                            <td><input id="inpId" type="text" maxlength="20" value="0" /></td>
+                        </tr>
+                        <tr>
+                            <td>Name</td>
+                            <td><input id="inpName" type="text" maxlength="20"
+                                       value="TestName" /></td>
+                        </tr>
+                        <tr>
+                            <td>Last Name</td>
+                            <td><input id="inpLName" type="text" maxlength="20"
+                                       value="TestLastName" /></td>
+                        </tr>
+                        <tr>
+                            <td>Email</td>
+                            <td><input id="inpEmail" type="text" maxlength="20"
+                                       value="qwe@qwe.ru" /></td>
+                        </tr>
+                        <tr>
+                            <td>Phone</td>
+                            <td><input id="inpPhone" type="text" maxlength="20"
+                                       value="89261234567" /></td>
+                        </tr>
+                        <tr>
+                            <td><input type="button" value="ok" onclick="sendPerson()" /></td>
+                        </tr>
+                    </table></td>
+            </tr>
+        </table>
+        <table>
+            <tr>
+                <td><input id="loadPersons" type=button value="Load persons"
+                           onclick="loadPersons()" /></td>
+                <td><input id="Button1" type=button value="Add person"
+                           onclick="showTable()" /></td>
+            </tr>
+        </table>
+        <pre id="get">GET</pre>
+        <pre id="send">SEND</pre>
 
 
-	<form action="ipload()" enctype="multipart/form-data">
-		<input type="file" />
-		<input name="Submit" type="submit" value="Upload image" />
-	</form>
+        <form action="ipload()" enctype="multipart/form-data">
+            <input type="file" />
+            <input name="Submit" type="submit" value="Upload image" />
+        </form>
 
-	<script type="text/javascript">
-		document.getElementById('modTable').style.visibility = "hidden";
-	</script>
-</body>
+        <script type="text/javascript">
+            document.getElementById('modTable').style.visibility = "hidden";
+        </script>
+    </body>
 </html>

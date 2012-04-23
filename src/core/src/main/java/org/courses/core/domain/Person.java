@@ -13,6 +13,21 @@ import javax.validation.constraints.Size;
 
 public class Person
 {
+
+    public Person()
+    {
+    }
+
+    public Person(long id, String firstName, String lastName, Date dateOfBirth, ArrayList<Phone> phone, ArrayList<Email> m_address, String comment)
+    {
+        setId(id);
+        setFirstName(firstName);
+        setLastName(lastName);
+        setDateOfBirth(dateOfBirth);
+        setPhone(phone);
+        setM_address(m_address);
+        setComment(comment);
+    }
     private long id;
     @NotNull(message = "Name is required")
     @Size(min = 3, message = "Name size must be more than 3")
@@ -21,15 +36,14 @@ public class Person
     @Size(min = 3, message = "Last name size must be more than 3")
     private String lastName;
     private Date dateOfBirth;
-    @Valid
-    private ArrayList<Email> email;
     private String photoFilePath;
     private byte[] photo;
     private String filePath;
     private byte[] fileData;
     @Valid
     private ArrayList<Phone> phone;
-    private ArrayList<String> m_address;
+    @Valid
+    private ArrayList<Email> m_address;
     private String comment;
 
     public static Set<String> validate(Object object, Validator validator)
@@ -42,7 +56,8 @@ public class Person
         }
         return errors;
     }
-      public long getId()
+
+    public long getId()
     {
         return id;
     }
@@ -101,22 +116,6 @@ public class Person
     public void setDateOfBirth(Date dateOfBirth)
     {
         this.dateOfBirth = dateOfBirth;
-    }
-
-    /**
-     * @return the email
-     */
-    public ArrayList<Email> getEmail()
-    {
-        return email;
-    }
-
-    /**
-     * @param email the email to set
-     */
-    public void setEmail(ArrayList<Email> email)
-    {
-        this.email = email;
     }
 
     /**
@@ -202,7 +201,7 @@ public class Person
     /**
      * @return the m_address
      */
-    public ArrayList<String> getM_address()
+    public ArrayList<Email> getM_address()
     {
         return m_address;
     }
@@ -210,7 +209,7 @@ public class Person
     /**
      * @param m_address the m_address to set
      */
-    public void setM_address(ArrayList<String> m_address)
+    public void setM_address(ArrayList<Email> m_address)
     {
         this.m_address = m_address;
     }
@@ -404,8 +403,6 @@ public class Person
 //    }
 //}
 // NEW 
-
-    /**
-     * @return the id
-     */
-  
+/**
+ * @return the id
+ */

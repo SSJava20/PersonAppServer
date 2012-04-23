@@ -128,12 +128,13 @@ public class ServerThread implements Runnable {
 				System.out.println(getStringCommand);
 				operateCommand(getStringCommand);
 			} catch (Exception e) {
-				try {
-					clientSocket.close();
-					server.serverThreads.remove(this);
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
+//				try {
+//					clientSocket.close();
+//					server.serverThreads.remove(this);
+//				} catch (IOException e1) {
+//					e1.printStackTrace();
+//				}
+                            e.printStackTrace();
 				break;
 			}
 //			System.out.println(getStringCommand);

@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import org.courses.core.domain.Email;
 import org.courses.core.domain.Person;
 import org.courses.core.domain.Phone;
 
@@ -71,15 +72,20 @@ public class PersonDAO_SQL implements IPersonDAO
 
         stat.close();
 
+        Statement statement = connection.createStatement();
+        ResultSet rs = statement.executeQuery("SELECT MAX(id) max_id FROM Persons");
+        rs.next();
+        person.setId(rs.getInt("max_id"));
+
         if (person.getM_address() != null)
         {
-            Iterator<String> itAddress = person.getM_address().iterator();
+            Iterator<Email> itAddress = person.getM_address().iterator();
 
             while (itAddress.hasNext())
             {
                 stat = connection.prepareStatement("INSERT INTO Addresses (PersonID, Address) VALUES(?,?)");
                 stat.setLong(1, person.getId());
-                stat.setString(2, itAddress.next());
+                stat.setString(2, itAddress.next().getM_email());
                 stat.execute();
                 stat.close();
             }
@@ -97,10 +103,6 @@ public class PersonDAO_SQL implements IPersonDAO
                 stat.close();
             }
         }
-        Statement statement = connection.createStatement();
-        ResultSet rs = statement.executeQuery("SELECT MAX(id) max_id FROM Persons");
-        rs.next();
-        person.setId(rs.getInt("max_id"));
         connection.close();
     }
 
@@ -138,10 +140,10 @@ public class PersonDAO_SQL implements IPersonDAO
 
         resultSet = statement.executeQuery(query);
 
-        ArrayList<String> adr = new ArrayList<String>();
+        ArrayList<Email> adr = new ArrayList<Email>();
         while (resultSet.next())
         {
-            adr.add(resultSet.getString(3));
+            adr.add(new Email(resultSet.getString(2)));
         }
 
         result.setM_address(adr);
@@ -153,7 +155,7 @@ public class PersonDAO_SQL implements IPersonDAO
         ArrayList<Phone> phone = new ArrayList<Phone>();
         while (resultSet.next())
         {
-            phone.add(new Phone(resultSet.getString(3)));
+            phone.add(new Phone(resultSet.getString(2)));
         }
 
         result.setPhone(phone);
@@ -187,10 +189,10 @@ public class PersonDAO_SQL implements IPersonDAO
             Statement inStat = connection.createStatement();
             ResultSet inResultSet = inStat.executeQuery(query);
 
-            ArrayList<String> adr = new ArrayList<String>();
+            ArrayList<Email> adr = new ArrayList<Email>();
             while (inResultSet.next())
             {
-                adr.add(inResultSet.getString(3));
+                adr.add(new Email(inResultSet.getString(2)));
             }
 
             tPerson.setM_address(adr);
@@ -202,7 +204,7 @@ public class PersonDAO_SQL implements IPersonDAO
             ArrayList<Phone> phone = new ArrayList<Phone>();
             while (inResultSet.next())
             {
-                phone.add(new Phone(inResultSet.getString(3)));
+                phone.add(new Phone(inResultSet.getString(2)));
             }
 
             tPerson.setPhone(phone);
